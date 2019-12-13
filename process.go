@@ -10,13 +10,26 @@ import (
 )
 
 func lab3(path_from string, path_to string, file_name string) {
-	
+  s := strings.Split(file_name, ".")  // .res
+  new_file_name := s[0] + ".res"
+  path_to_bool := false;
+  files, err := ioutil.ReadDir(".")
+    if err != nil {
+        log.Fatal(err)
+    }
 
+    for _, file := range files {
+    if ("./" + file.Name() == path_to) && file.IsDir(){  //mkdir
+      path_to_bool = true;
+    }
+  }
 
-
-
-
-
+  if !path_to_bool {
+    err := os.MkdirAll(path_to, 0750)
+        if err != nil {
+                log.Printf("%v", err)
+        }
+  }
     file, err := os.Open(path_from + "/" + file_name) //open
     if err != nil{
         fmt.Println(err) 
@@ -57,11 +70,20 @@ func lab3(path_from string, path_to string, file_name string) {
 }
  
 func main() {
-	
+  path_from := os.Args[1]
+  path_to := os.Args[2]
+
+  i := 0
+  files, err := ioutil.ReadDir(path_from)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    for _, file := range files {
+    go lab3(path_from, path_to, file.Name());
+    i++
+  }
 	fmt.Print("Total number of processed files: " + strconv.Itoa(i))
 	//time.Sleep(1000)
 	fmt.Scanf(&input)
-
-
-
 }
