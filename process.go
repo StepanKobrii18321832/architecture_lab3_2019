@@ -37,7 +37,7 @@ func lab3(path_from string, path_to string, file_name string) {
     }
     defer file.Close() 
      
-    data := make([]byte, 2000)
+    data := make([]byte, 1)
 	count := 0
 	str :="";
     for{
