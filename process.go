@@ -84,6 +84,7 @@ func main() {
     i++
   }
 	fmt.Print("Total number of processed files: " + strconv.Itoa(i))
-	//time.Sleep(1000)
+// 	var tmp string
+// 	fmt.Scanf(tmp)
 	fmt.Scanf(&input)
 }
