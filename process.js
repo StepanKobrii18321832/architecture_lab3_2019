@@ -12,9 +12,9 @@ fs.exists(path_to, exists => {
 
 fs.readdir(path_from, (err, files) => {
   files.map(file => {
-    fs.readFile(path_from + file, 'utf8', (err, data) => {
+    fs.readFile(`${path_from}/${file}`, 'utf8', (err, data) => {
       fs.writeFile(
-        path_to + file.split('.')[0] + '.res',
+        `${path_to}/${file.split('.')[0]}.res`,
         data.split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s/).length,
         () => { }
       );
