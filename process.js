@@ -1,25 +1,38 @@
+'use strict';
 const fs = require('fs');
 
-const path_from = process.argv[2];
-const path_to = process.argv[3];
+const inputDir = args[2];
+const outputDir = args[3];
 
-fs.exists(path_to, exists => {
-  if (!exists)
-    fs.mkdir(path_to, err => {
-      if (err) throw err
-    });
-});
+const lab3 = (input, output) => {
+  if (!fs.existsSync(input)) return null;
+  if (!fs.existsSync(output)) fs.mkdirSync(output);
 
-fs.readdir(path_from, (err, files) => {
-  files.map(file => {
-    fs.readFile(`${path_from}/${file}`, 'utf8', (err, data) => {
-      fs.writeFile(
-        `${path_to}/${file.split('.')[0]}.res`,
-        data.split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s/).length,
-        () => { }
-      );
-    });
+  fs.readdir(input, 'utf-8',(err, files) => {
+    if(err) throw err;
+    Promise.all(files.map(file => {
+      return new Promise((resolve,reject) => {
+        let count = 0;
+        let result = '';
+        const readstream = fs.createReadStream(`./${input}/${file}`, err => { if(err) reject(err);});
+
+
+       readstream.on('data', data => {
+          result += data;
+          count = result.split(/(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s/).length;
+          console.log(result);
+          console.log(count);
+        })
+        readstream.on('end',() => {
+            fs.writeFile(`${output}/${file.split('.')[0]}.res`, count,'utf-8', err => {if(err) reject(err);});
+          });
+        resolve(true);
+      });
+    }))
+      .then(res => {
+        console.log(`Total number of processed files: ${res.length}.`);
+      }, err => { if(err) console.log(err.stack); });
   });
-  console.log(`Total number of processed files: ${files.length}`);
-});
+};
 
+lab3(inputDir, outputDir);
